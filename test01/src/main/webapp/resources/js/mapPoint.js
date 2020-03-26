@@ -1,11 +1,12 @@
-var mapContainer = document.getElementById('map') // 지도를 표시할 div  
-var mapOption = function(wi,gu) { 
-        center : new kakao.maps.LatLng(wi, gu) // 지도의 중심좌표
-        level: 3 // 지도의 확대 레벨
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+mapOption = { 
+        center : new kakao.maps.LatLng(37.570485, 126.989062), // 지도의 중심좌표
+        level : 3 // 지도의 확대 레벨
         };
 
+console.log(mapOption);
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-
+console.log(map);
 var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
 var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
 var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
