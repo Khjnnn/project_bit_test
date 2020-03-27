@@ -17,6 +17,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=78d603c9ceea19aeba68479415b917d4"></script>
 
 </head>
 <body>
@@ -31,65 +32,28 @@
 	<script src="http://code.jquery.com/jquery-1.11.0.js"></script>
 	
 	
-	<script>
-	/*
-		var loc = document.getElementById("myLocation");
-		var mloc = document.getElementById("moveLocation");
-
-		function findLocation() {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(showYourLocation);
-			} else { 
-				loc.innerHTML = "이 문장은 사용자의 웹 브라우저가 Geolocation API를 지원하지 않을 때 나타납니다!";
-			}
-		}
-
-		function showYourLocation(position) {
-			loc.innerHTML = "현재 사용자는 위도 " + position.coords.latitude + ", 경도 " + position.coords.longitude + "에 위치하고 있습니다.";	
-		}
-		
-		
-		
-		*/
-		
-		 $(function() {        
-		        // Geolocation API에 액세스할 수 있는지를 확인
-		        if (navigator.geolocation) {
-		            //위치 정보를 정기적으로 얻기
-		            var id = navigator.geolocation.watchPosition(
-		                    function(pos) {
-		                    	console.log(pos.coords.latitude);
-		                    	console.log(pos.coords.longitude);
-		                        $('#latitude').html(pos.coords.latitude);     // 위도 
-		                        $('#longitude').html(pos.coords.longitude); // 경도
-		                        $('#map').data("wi",pos.coords.latitude);
-		                        $('#map').data("gu",pos.coords.longitude); 
-		                    });
-		            
-		            // 버튼 클릭으로 감시를 중지
-		            $('#btnStop').click(function() {
-		                navigator.geolocation.clearWatch(id);
-		            });
-		        } else {
-		            alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.")
-		        }
-		        
-		    });
-		
+	<script>	
+	function findLocation() {
+		navigator.geolocation.getCurrentPosition(function(pos) {
+			$('#latitude').html(pos.coords.latitude);     // 위도 
+            $('#longitude').html(pos.coords.longitude); // 경도
+		})
+	}		
 	</script>
     <ul>
         <li>위도:<span id="latitude"></span></li>
         <li>경도:<span id="longitude"></span></li>
     </ul>
+    <input id="btnStart" type="button" value="시작" />
     <input id="btnStop" type="button" value="감시를 끝낸다" />
+    <input id="btnTest1" type="button" value="테스트 1" />
+    <input id="btnTest2" type="button" value="테스트 2" />
     <div id="map" style="width:100%;height:350px;"></div>  
-
+	<script src="/resources/js/mapPoint.js" type="text/javascript"></script>
 	<p>
     <em>지도를 마우스로 클릭하면 선 그리기가 시작되고<br>오른쪽 마우스를 클릭하면 선 그리기가 종료됩니다</em>
 	</p>
-	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=78d603c9ceea19aeba68479415b917d4"></script>
 	
-
 </body>
-<script src="/resources/js/mapPoint.js" type="text/javascript"></script>
+
 </html>
