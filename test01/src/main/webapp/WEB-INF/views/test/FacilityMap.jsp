@@ -35,6 +35,7 @@
 	<script>	
 	function findLocation() {
 		navigator.geolocation.getCurrentPosition(function(pos) {
+			console.log("현위치");
 			$('#latitude').html(pos.coords.latitude);     // 위도 
             $('#longitude').html(pos.coords.longitude); // 경도
 		})
@@ -48,6 +49,8 @@
     <input id="btnStop" type="button" value="감시를 끝낸다" />
     <input id="btnTest1" type="button" value="테스트 1" />
     <input id="btnTest2" type="button" value="테스트 2" />
+    <input id="btnTest3" type="button" value="테스트 3" />
+    <input id="btnTest4" type="button" value="테스트 4" />
     <div id="map" style="width:100%;height:350px;"></div>  
 	<script src="/resources/js/mapPoint.js" type="text/javascript"></script>
 	<p>
