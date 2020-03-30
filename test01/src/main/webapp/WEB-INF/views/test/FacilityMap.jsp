@@ -52,7 +52,7 @@
     <input id="btnTest3" type="button" value="테스트 3" />
     <input id="btnTest4" type="button" value="테스트 4" />
     <div id="map" style="width:100%;height:350px;"></div>  
-	<script src="/resources/js/mapPoint.js" type="text/javascript"></script>
+	<script src="${pageContext.request.contextPath}/resources/js/mapPoint.js" type="text/javascript"></script>
 	<p>
     <em>지도를 마우스로 클릭하면 선 그리기가 시작되고<br>오른쪽 마우스를 클릭하면 선 그리기가 종료됩니다</em>
 	</p>
