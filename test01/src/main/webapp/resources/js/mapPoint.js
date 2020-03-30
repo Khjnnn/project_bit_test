@@ -42,8 +42,8 @@
 		    // 시간마다 자동 맵 마킹 함수
 		    playMark = setInterval(function() {
 		    	btnTest2(); //마킹 함수 호출 
-		    	console.log("마킹. 3초지남"+latlng);		    	
-		      }, 3000);
+		    	console.log("마킹. 60초지남"+latlng);		    	
+		      }, 60000);
 		    //3초 셋 setInterval End 
 		    
 	var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
