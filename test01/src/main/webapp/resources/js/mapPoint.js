@@ -39,7 +39,13 @@
 			var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 		    
 		    console.log("맵옵션:"+mapOption);
-		
+		    // 시간마다 자동 맵 마킹 함수
+		    playMark = setInterval(function() {
+		    	btnTest2(); //마킹 함수 호출 
+		    	console.log("마킹. 3초지남"+latlng);		    	
+		      }, 3000);
+		    //3초 셋 setInterval End 
+		    
 	var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
 	var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
 	var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
@@ -371,7 +377,7 @@
 			
 		}
 	   function btnTest2() {
-			latlng = new kakao.maps.LatLng(37.563788, 126.98643);
+		    latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
 			var clickPosition = latlng;
 			
 		    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
@@ -547,10 +553,13 @@
 
 		function clearWatch() {
 			console.log("끝");
+			console.log("stop");
+	    	clearInterval(playMark); // 타이머 함수 종료 
+	    	
 			
 		    // 지도 오른쪽 클릭 이벤트가 발생했는데 선을 그리고있는 상태이면
 		    if (drawingFlag) {
-		        
+		    	 
 		        // 마우스무브로 그려진 선은 지도에서 제거합니다
 		        moveLine.setMap(null);
 		        moveLine = null;  
