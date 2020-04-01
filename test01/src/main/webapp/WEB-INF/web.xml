@@ -24,10 +24,18 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-		
+			
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>my-secure-app</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+	<user-data-constraint>
+		<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+	</user-data-constraint>
 </web-app>
