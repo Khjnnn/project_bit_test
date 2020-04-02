@@ -4,11 +4,8 @@
 	
 	document.getElementById("btnStart").addEventListener("click", init);
 	
-	
-	
-	
 	var watchID = null;
-	
+	var setNum = 0;
 	var ele = document.getElementById("map");
 	var customEvent = document.createEvent("mouseEvent");
 	var customEvent2 = document.createEvent("mouseEvent");
@@ -16,177 +13,73 @@
 	customEvent.initEvent('rightclick', true, true);
 	customEvent2.initEvent('mousemove', true, true);
 	customEvent3.initEvent('click', true, true);
+	var latlng = null;
+	var lat;
+	var lit;
+	var mapContainer = document.getElementById('map') // 지도를 표시할 div
+	var mapOption = {
+			 center:latlng,
+		     level:3
+		     }
+	var map;
 	
+	function findLocation() {
+		navigator.geolocation.getCurrentPosition(function(pos) {
+			console.log("현위치");
+			$('#latitude').html(pos.coords.latitude);     // 위도
+            $('#longitude').html(pos.coords.longitude); // 경도
+            lat = pos.coords.latitude;
+            lit = pos.coords.longitude;
+            latlng =  new kakao.maps.LatLng(lat,lit);
+            mapOption = {
+       			 center:latlng,
+       		     level:3
+       		     }
+        	map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+            return map, lat, lit;
+		})
+	}
 	
+	findLocation();
+	//var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 	
 	function init()
 		{
+			console.log("====Start Click ======");
 			var options = { enableHighAccuracy: true };
+			
 			watchID = navigator.geolocation.watchPosition(current_position, onError, options);
-		    
+			// 시간마다 자동 맵 마킹 함수
+		    // 3초 셋 setInterval End
+			playMark = setInterval(function() {
+		    	btnTest2(); // 마킹 함수 호출
+		    	console.log("마킹. 60초지남//테스트6초"+latlng);	
+		    	if(setNum == 1){
+		    		clearInterval(playMark);
+		    	}
+		      }, 6000);
 		} // init End
 		 
 	function current_position(position)
 		{
-			console.log("포지션탐");
-		    var latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-		      
-		    var mapOption = {
-		        center:latlng,
-		        level:3
-		    }
-			var mapContainer = document.getElementById('map') // 지도를 표시할 div
-			var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-		    
-		    console.log("맵옵션:"+mapOption);
-		    // 시간마다 자동 맵 마킹 함수
-		    playMark = setInterval(function() {
-		    	btnTest2(); //마킹 함수 호출 
-		    	console.log("마킹. 60초지남"+latlng);		    	
-		      }, 60000);
-		    //3초 셋 setInterval End 
+			console.log("포지션====");
+			lat = position.coords.latitude;
+			lit = position.coords.longitude;
+			return lat, lit;
+			console.log("포"+lat);
+			console.log("포"+lit);
+			
+		}    // current End
+	
+	console.log("밖----"+lat);
+	console.log(lit);		   	   
 		    
 	var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
 	var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
 	var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
 	var distanceOverlay; // 선의 거리정보를 표시할 커스텀오버레이 입니다
 	var dots = {}; // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
-	
-	// 지도에 클릭 이벤트를 등록합니다
-	// 지도를 클릭하면 선 그리기가 시작됩니다 그려진 선이 있으면 지우고 다시 그립니다
-	kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-		console.log("클릭 위위도도"+latlng);  
-	    // 마우스로 클릭한 위치입니다
-	    var clickPosition = latlng;
-	
-	    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
-	    if (!drawingFlag) {
-	
-	        // 상태를 true로, 선이 그리고있는 상태로 변경합니다
-	        drawingFlag = true;
-	        
-	        // 지도 위에 선이 표시되고 있다면 지도에서 제거합니다
-	        deleteClickLine();
-	        
-	        // 지도 위에 커스텀오버레이가 표시되고 있다면 지도에서 제거합니다
-	        deleteDistnce();
-	
-	        // 지도 위에 선을 그리기 위해 클릭한 지점과 해당 지점의 거리정보가 표시되고 있다면 지도에서 제거합니다
-	        deleteCircleDot();
-	    
-	        // 클릭한 위치를 기준으로 선을 생성하고 지도위에 표시합니다
-	        clickLine = new kakao.maps.Polyline({
-	            map: map, // 선을 표시할 지도입니다
-	            path: [clickPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
-	            strokeWeight: 3, // 선의 두께입니다
-	            strokeColor: '#db4040', // 선의 색깔입니다
-	            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-	            strokeStyle: 'solid' // 선의 스타일입니다
-	        });
-	        
-	        // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
-	        moveLine = new kakao.maps.Polyline({
-	            strokeWeight: 3, // 선의 두께입니다
-	            strokeColor: '#db4040', // 선의 색깔입니다
-	            strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
-	            strokeStyle: 'solid' // 선의 스타일입니다
-	        });
-	    
-	        // 클릭한 지점에 대한 정보를 지도에 표시합니다
-	        displayCircleDot(clickPosition, 0);
-	
-	            
-	    } else { // 선이 그려지고 있는 상태이면
-	
-	        // 그려지고 있는 선의 좌표 배열을 얻어옵니다
-	        var path = clickLine.getPath();
-	
-	        // 좌표 배열에 클릭한 위치를 추가합니다
-	        path.push(clickPosition);
-	        
-	        // 다시 선에 좌표 배열을 설정하여 클릭 위치까지 선을 그리도록 설정합니다
-	        clickLine.setPath(path);
-	
-	        var distance = Math.round(clickLine.getLength());
-	        displayCircleDot(clickPosition, distance);
-	    }
-	});
-	    
-	// 지도에 마우스무브 이벤트를 등록합니다
-	// 선을 그리고있는 상태에서 마우스무브 이벤트가 발생하면 그려질 선의 위치를 동적으로 보여주도록 합니다
-	kakao.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
-		console.log("마우스 무브 위도: "+latlng);  
 
-	    // 지도 마우스무브 이벤트가 발생했는데 선을 그리고있는 상태이면
-	    if (drawingFlag){
-	        
-	        // 마우스 커서의 현재 위치를 얻어옵니다
-	        var mousePosition = latlng; 
-	
-	        // 마우스 클릭으로 그려진 선의 좌표 배열을 얻어옵니다
-	        var path = clickLine.getPath();
-	        
-	        // 마우스 클릭으로 그려진 마지막 좌표와 마우스 커서 위치의 좌표로 선을 표시합니다
-	        var movepath = [path[path.length-1], mousePosition];
-	        moveLine.setPath(movepath);    
-	        moveLine.setMap(map);
-	        
-	        var distance = Math.round(clickLine.getLength() + moveLine.getLength()), // 선의 총
-																						// 거리를
-																						// 계산합니다
-	            content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; // 커스텀오버레이에
-																															// 추가될
-																															// 내용입니다
-	        
-	        // 거리정보를 지도에 표시합니다
-	        showDistance(content, mousePosition);   
-	    }             
-	});                 
-	
-	// 지도에 마우스 오른쪽 클릭 이벤트를 등록합니다
-	// 선을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면 선 그리기를 종료합니다
-	kakao.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
-		console.log("우클릭 종료 위도:"+latlng);
-	    // 지도 오른쪽 클릭 이벤트가 발생했는데 선을 그리고있는 상태이면
-	    if (drawingFlag) {
-	        
-	        // 마우스무브로 그려진 선은 지도에서 제거합니다
-	        moveLine.setMap(null);
-	        moveLine = null;  
-	        
-	        // 마우스 클릭으로 그린 선의 좌표 배열을 얻어옵니다
-	        var path = clickLine.getPath();
-	    
-	        // 선을 구성하는 좌표의 개수가 2개 이상이면
-	        if (path.length > 1) {
-	
-	            // 마지막 클릭 지점에 대한 거리 정보 커스텀 오버레이를 지웁니다
-	            if (dots[dots.length-1].distance) {
-	                dots[dots.length-1].distance.setMap(null);
-	                dots[dots.length-1].distance = null;    
-	            }
-	
-	            var distance = Math.round(clickLine.getLength()), // 선의 총 거리를
-																	// 계산합니다
-	                content = getTimeHTML(distance); // 커스텀오버레이에 추가될 내용입니다
-	                
-	            // 그려진 선의 거리정보를 지도에 표시합니다
-	            showDistance(content, path[path.length-1]);  
-	             
-	        } else {
-	
-	            // 선을 구성하는 좌표의 개수가 1개 이하이면
-	            // 지도에 표시되고 있는 선과 정보들을 지도에서 제거합니다.
-	            deleteClickLine();
-	            deleteCircleDot(); 
-	            deleteDistnce();
-	
-	        }
-	        
-	        // 상태를 false로, 그리지 않고 있는 상태로 변경합니다
-	        drawingFlag = false;          
-	    }  
-	});    
 	
 	// 클릭으로 그려진 선을 지도에서 제거하는 함수입니다
 	function deleteClickLine() {
@@ -232,17 +125,17 @@
 	// 선이 그려지고 있는 상태일 때 지도를 클릭하면 호출하여
 	// 클릭 지점에 대한 정보 (동그라미와 클릭 지점까지의 총거리)를 표출하는 함수입니다
 	function displayCircleDot(position, distance) {
-	
+
 	    // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
 	    var circleOverlay = new kakao.maps.CustomOverlay({
 	        content: '<span class="dot"></span>',
 	        position: position,
 	        zIndex: 1
 	    });
-	
+
 	    // 지도에 표시합니다
 	    circleOverlay.setMap(map);
-	
+
 	    if (distance > 0) {
 	        // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
 	        var distanceOverlay = new kakao.maps.CustomOverlay({
@@ -251,11 +144,11 @@
 	            yAnchor: 1,
 	            zIndex: 2
 	        });
-	
+
 	        // 지도에 표시합니다
 	        distanceOverlay.setMap(map);
 	    }
-	
+
 	    // 배열에 추가합니다
 	    dots.push({circle:circleOverlay, distance: distanceOverlay});
 	}
@@ -317,13 +210,14 @@
 	
 	    return content;
 	}
-	   function btnTest() {
+	
+	function btnTest() {
 			latlng = new kakao.maps.LatLng(37.564019, 126.98633);
 			var clickPosition = latlng;
 			
 		    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
 		    if (!drawingFlag) {
-		
+		    	
 		        // 상태를 true로, 선이 그리고있는 상태로 변경합니다
 		        drawingFlag = true;
 		        
@@ -359,7 +253,7 @@
 		
 		            
 		    } else { // 선이 그려지고 있는 상태이면
-		
+		    	
 		        // 그려지고 있는 선의 좌표 배열을 얻어옵니다
 		        var path = clickLine.getPath();
 		
@@ -371,13 +265,13 @@
 		
 		        var distance = Math.round(clickLine.getLength());
 		        displayCircleDot(clickPosition, distance);
-		    }
-			console.log(customEvent3);
-			console.log(latlng);
-			
+		    }			
 		}
-	   function btnTest2() {
-		    latlng = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	
+	function btnTest2() {
+		    latlng = new kakao.maps.LatLng(lat, lit);
+		    console.log("실시간찍힘");
+			console.log(latlng);
 			var clickPosition = latlng;
 			
 		    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
@@ -431,10 +325,10 @@
 		        var distance = Math.round(clickLine.getLength());
 		        displayCircleDot(clickPosition, distance);
 		    }
-			console.log(customEvent3);
-			console.log(latlng);
+			
 		}
-	   function btnTest3() {
+	
+	function btnTest3() {
 			latlng = new kakao.maps.LatLng(37.6045457, 127.074291);
 			var clickPosition = latlng;
 			
@@ -492,8 +386,66 @@
 			console.log(customEvent3);
 			console.log(latlng);
 		}
-	   function btnTest4() {
+	
+	function btnTest4() {
 			latlng = new kakao.maps.LatLng(37.6045367, 127.074212);
+			var clickPosition = latlng;
+			
+		    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
+		    if (!drawingFlag) {
+		
+		        // 상태를 true로, 선이 그리고있는 상태로 변경합니다
+		        drawingFlag = true;
+		        
+		        // 지도 위에 선이 표시되고 있다면 지도에서 제거합니다
+		        deleteClickLine();
+		        
+		        // 지도 위에 커스텀오버레이가 표시되고 있다면 지도에서 제거합니다
+		        deleteDistnce();
+		
+		        // 지도 위에 선을 그리기 위해 클릭한 지점과 해당 지점의 거리정보가 표시되고 있다면 지도에서 제거합니다
+		        deleteCircleDot();
+		    
+		        // 클릭한 위치를 기준으로 선을 생성하고 지도위에 표시합니다
+		        clickLine = new kakao.maps.Polyline({
+		            map: map, // 선을 표시할 지도입니다
+		            path: [clickPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+		            strokeWeight: 3, // 선의 두께입니다
+		            strokeColor: '#db4040', // 선의 색깔입니다
+		            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+		            strokeStyle: 'solid' // 선의 스타일입니다
+		        });
+		        
+		        // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
+		        moveLine = new kakao.maps.Polyline({
+		            strokeWeight: 3, // 선의 두께입니다
+		            strokeColor: '#db4040', // 선의 색깔입니다
+		            strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+		            strokeStyle: 'solid' // 선의 스타일입니다
+		        });
+		    
+		        // 클릭한 지점에 대한 정보를 지도에 표시합니다
+		        displayCircleDot(clickPosition, 0);
+		
+		            
+		    } else { // 선이 그려지고 있는 상태이면
+		
+		        // 그려지고 있는 선의 좌표 배열을 얻어옵니다
+		        var path = clickLine.getPath();
+		
+		        // 좌표 배열에 클릭한 위치를 추가합니다
+		        path.push(clickPosition);
+		        
+		        // 다시 선에 좌표 배열을 설정하여 클릭 위치까지 선을 그리도록 설정합니다
+		        clickLine.setPath(path);
+		
+		        var distance = Math.round(clickLine.getLength());
+		        displayCircleDot(clickPosition, distance);
+		    }
+		}
+	
+	function btnTest5() {
+			latlng = new kakao.maps.LatLng(37.570883, 126.985212);
 			var clickPosition = latlng;
 			
 		    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
@@ -550,12 +502,11 @@
 			console.log(customEvent3);
 			console.log(latlng);
 		}
-
-		function clearWatch() {
-			console.log("끝");
-			console.log("stop");
-	    	clearInterval(playMark); // 타이머 함수 종료 
-	    	
+	
+	function clearWatch() {
+			clearInterval(playMark); // 타이머 함수 종료
+			setNum = 1;
+			console.log("====stop stop====");
 			
 		    // 지도 오른쪽 클릭 이벤트가 발생했는데 선을 그리고있는 상태이면
 		    if (drawingFlag) {
@@ -576,9 +527,11 @@
 		                dots[dots.length-1].distance = null;    
 		            }
 		
-		            var distance = Math.round(clickLine.getLength()), // 선의 총 거리를
+		            var distance = Math.round(clickLine.getLength()), // 선의 총
+																		// 거리를
 																		// 계산합니다
-		                content = getTimeHTML(distance); // 커스텀오버레이에 추가될 내용입니다
+		                content = getTimeHTML(distance); // 커스텀오버레이에 추가될
+															// 내용입니다
 		                
 		            // 그려진 선의 거리정보를 지도에 표시합니다
 		            showDistance(content, path[path.length-1]);  
@@ -599,17 +552,10 @@
 			navigator.geolocation.clearWatch(watchID);
 		    watchID = null;
 		} // clearWatch End
-	   document.getElementById("btnTest1").addEventListener("click", btnTest);
-	   document.getElementById("btnTest2").addEventListener("click", btnTest2);
-	   document.getElementById("btnTest3").addEventListener("click", btnTest3);
-	   document.getElementById("btnTest4").addEventListener("click", btnTest4);
-
-		document.getElementById("btnStop").addEventListener("click", clearWatch);
-		}// current 포지션 End
-	
-		// onError Callback receives a PositionError object
-	    //
-	   function onError(error) {
+		
+		
+	// onError Callback receives a PositionError object    
+	function onError(error) {
 		 alert("이 브라우저에서는 Geolocation이 지원되지 않습니다.")
 	     console.log('code: '    + error.code    + '\n' +
 	            'message: ' + error.message + '\n');

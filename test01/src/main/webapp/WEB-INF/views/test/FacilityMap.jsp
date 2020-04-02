@@ -13,14 +13,29 @@
 .distanceInfo {position:relative;top:5px;left:5px;list-style:none;margin:0;}
 .distanceInfo .label {display:inline-block;width:50px;}
 .distanceInfo:after {content:none;}
+
+#btnStart{
+  padding: 25px 30px;
+}
+#btnStop{
+  padding: 25px 30px;
+}
 </style>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=78d603c9ceea19aeba68479415b917d4"></script>
-
+<script>
+  function bodyInit(){
+		document.getElementById("btnTest1").addEventListener("click", btnTest);
+		document.getElementById("btnTest3").addEventListener("click", btnTest3);
+		document.getElementById("btnTest4").addEventListener("click", btnTest4);
+		document.getElementById("btnTest5").addEventListener("click", btnTest5);
+		document.getElementById("btnStop").addEventListener("click", clearWatch);
+  }
+</script>
 </head>
-<body>
+<body onload='bodyInit()'>
 	<h1 align='center'>시설지도 페이지 입니당</h1>
 
 	<h1>geolocation을 이용한 위도와 경도 찾기</h1>
@@ -31,26 +46,19 @@
 
 	<script src="http://code.jquery.com/jquery-1.11.0.js"></script>
 	
-	
-	<script>	
-	function findLocation() {
-		navigator.geolocation.getCurrentPosition(function(pos) {
-			console.log("현위치");
-			$('#latitude').html(pos.coords.latitude);     // 위도 
-            $('#longitude').html(pos.coords.longitude); // 경도
-		})
-	}		
-	</script>
     <ul>
         <li>위도:<span id="latitude"></span></li>
         <li>경도:<span id="longitude"></span></li>
     </ul>
-    <input id="btnStart" type="button" value="시작" />
-    <input id="btnStop" type="button" value="감시를 끝낸다" />
+    <div class="btn-group">
+    <input id="btnStart" type="button" value=" START " />
+    <input id="btnStop" type="button" value=" STOP " />
     <input id="btnTest1" type="button" value="테스트 1" />
-    <input id="btnTest2" type="button" value="테스트 2" />
+    
     <input id="btnTest3" type="button" value="테스트 3" />
     <input id="btnTest4" type="button" value="테스트 4" />
+    <input id="btnTest5" type="button" value="테스트 5" />
+    </div>
     <div id="map" style="width:100%;height:350px;"></div>  
 	<script src="${pageContext.request.contextPath}/resources/js/mapPoint.js" type="text/javascript"></script>
 	<p>
