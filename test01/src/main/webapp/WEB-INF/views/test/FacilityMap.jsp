@@ -44,7 +44,7 @@
 	<p id="myLocation"></p>
 	<p id="moveLocation"></p>
 
-	<script src="http://code.jquery.com/jquery-1.11.0.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 	
     <ul>
         <li>위도:<span id="latitude"></span></li>
@@ -62,7 +62,7 @@
     <div id="map" style="width:100%;height:350px;"></div>  
 	<script src="${pageContext.request.contextPath}/resources/js/mapPoint.js" type="text/javascript"></script>
 	<p>
-    <em>지도를 마우스로 클릭하면 선 그리기가 시작되고<br>오른쪽 마우스를 클릭하면 선 그리기가 종료됩니다</em>
+    <em>지도 Start 클릭하면 선 그리기가 시작되고<br>Stop 버튼을 클릭하면 선 그리기가 종료됩니다</em>
 	</p>
 	
 </body>
